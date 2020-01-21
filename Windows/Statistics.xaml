@@ -1,0 +1,58 @@
+﻿<Window x:Class="HealthAssistant.Windows.Statistics"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:HealthAssistant"
+        xmlns:commonsClasses="clr-namespace:Commons.Classes;assembly=Commons"
+        xmlns:commonsViews="clr-namespace:Commons.Views;assembly=Commons"
+        xmlns:services="clr-namespace:HealthAssistant.Services"
+        xmlns:commonsServices="clr-namespace:Commons.Services;assembly=Commons"
+        xmlns:charts="clr-namespace:HealthAssistant.Charts"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="20"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        WindowState="Maximized"
+        Title="Statistik">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <GroupBox Header="Kalorien" Grid.Row="0" Grid.Column="0" Margin="10">
+            <Grid>
+                <charts:CalorieLineChart />
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Makronährstoffe" Grid.Row="1" Grid.Column="0" Margin="10">
+            <Grid>
+                <charts:NutritionLineChart />
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Gewicht" Grid.Row="0" Grid.Column="1" Margin="10">
+            <Grid>
+                <charts:WeightLineChart />
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Trainingsvolumen" Grid.Row="1" Grid.Column="1" Margin="10">
+            <Grid>
+                <charts:TrainingVolumeLineChart />
+            </Grid>
+        </GroupBox>
+
+        <Button Click="Button_Click" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="0" Style="{DynamicResource MaterialDesignFloatingActionAccentButton}" Margin="20">
+            <md:PackIcon Kind="ArrowLeft" />
+        </Button>
+
+    </Grid>
+</Window>

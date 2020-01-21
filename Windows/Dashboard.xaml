@@ -1,0 +1,529 @@
+﻿<Window x:Class="HealthAssistant.Windows.Dashboard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HealthAssistant.Windows"
+        xmlns:commonsClasses="clr-namespace:Commons.Classes;assembly=Commons"
+        xmlns:commonsViews="clr-namespace:Commons.Views;assembly=Commons"
+        xmlns:services="clr-namespace:HealthAssistant.Services"
+        xmlns:commonsServices="clr-namespace:Commons.Services;assembly=Commons"
+        xmlns:charts="clr-namespace:HealthAssistant.Charts"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="20"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        WindowState="Maximized"
+        Title="Wumanaksi Appum">
+    <Window.Resources>
+        <ResourceDictionary>
+            <!--#region Services-->
+            <services:ProgressForegroundConverter x:Key="ProgressForegroundConverter"/>
+            <services:ExerciseCompareConverter x:Key="ExerciseCompareConverter"/>
+            <commonsServices:DateTimeShortConverter x:Key="DateTimeShortener" />
+            <!--#endregion-->
+
+            <!--#region TelerikAutocompleteStyle-->
+            <!--
+            <Style x:Key="AutoCompleteStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="13.333" />
+                <Setter Property="Foreground" Value="DarkBlue" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <DataTemplate x:Key="FoodSearchAutoComplete">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding Name}" Style="{StaticResource AutoCompleteStyle}" />
+                    <TextBlock Text=", " Style="{StaticResource AutoCompleteStyle}" />
+                    <TextBlock Text="{Binding Kalorien}" Style="{StaticResource AutoCompleteStyle}" />
+                    <TextBlock Text=" kcal" Style="{StaticResource AutoCompleteStyle}" />
+                </StackPanel>   
+            </DataTemplate>
+             -->
+            <!--#endregion-->
+            <!--#region LebensmitteleintragDialog-->
+            <DataTemplate DataType="{x:Type commonsViews:FoodEntryView}">
+                <StackPanel HorizontalAlignment="Center" Width="300" Orientation="Vertical">
+
+                    <!--#region Header-->
+                    <StackPanel Orientation="Horizontal" Margin="0,10">
+                        <md:PackIcon Kind="FoodApple" Width="50" Height="50" Margin="10" HorizontalAlignment="Center"/>
+                        <TextBlock Foreground="Gray" TextWrapping="Wrap" Width="200" Margin="10" Text="Lebensmittel auswählen und Gewicht eingeben" FontSize="20" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                    </StackPanel>
+                    <!--#endregion-->
+
+                    <!--<telerik:RadAutoCompleteBox
+                        WatermarkContent="Lebensmittelnamen eingeben..."
+                        ItemsSource="{Binding LebensmittelAuswahl}"
+                        SelectedItem="{Binding AusgewaehltesLebensmittel, Mode=TwoWay}"
+                        x:Name="telerikAutocompleteBox1"
+                        TextSearchMode="Contains"
+                        AutoCompleteMode="Suggest"
+                        TextSearchPath="Name"
+                        Background="Black"
+                        SelectionMode="Single"
+                        VerticalAlignment="Top"
+                        Margin="0,20,0,0"
+                        Height="100"
+                        DropDownItemTemplate="{StaticResource FoodSearchAutoComplete}"
+                        BorderBrush="DeepSkyBlue"
+                        BorderThickness="10" >
+                    </telerik:RadAutoCompleteBox>-->
+                    <!--#region FoodList-->
+                    <Border BorderThickness="1" BorderBrush="DeepSkyBlue" Margin="10">
+                        <ScrollViewer Height="200" BorderBrush="LightSlateGray" Margin="10">
+                            <ListBox   ItemsSource="{Binding FoodSelections}" SelectedItem="{Binding SelectedFood, Mode=TwoWay}" >
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Width="300">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Name}" Grid.Column="0" Style="{DynamicResource MaterialDesignTextBlock}" FontSize="16"  />
+                                            <StackPanel Orientation="Horizontal" Grid.Column="1"  >
+                                                <TextBlock Text="{Binding Calories, StringFormat=N1}" Style="{DynamicResource MaterialDesignTextBlock}" FontSize="16"  />
+                                                <TextBlock Text=" kcal" Style="{DynamicResource MaterialDesignTextBlock}" FontSize="16"  />
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </ScrollViewer>
+                    </Border>
+                    <!--#endregion-->
+
+                    <!--#region Date and Weight-->
+                    <DatePicker 
+                                 PreviewTextInput="NumberValidationTextBox"
+                                 SelectedDate="{Binding SelectedDate}"
+                                FontSize="18"
+                                 BorderBrush="DeepSkyBlue"
+                                 Margin="50,15" />
+                    <StackPanel Orientation="Horizontal" Margin="50,15">
+                        <TextBlock Style="{DynamicResource MaterialDesignTextBlock}" Text="Gewicht in g:" FontSize="18" Margin="4" />
+                        <TextBox x:Name="txtGewicht" 
+                                 PreviewTextInput="NumberValidationTextBox"
+                                 TextAlignment="Center"
+                                 FontSize="18"
+                                 MaxLength="4"
+                                 Width="50"
+                                 Style="{DynamicResource MaterialDesignTextBox}"
+                                 Text="{Binding Weight}"
+                                 Margin="4" />
+                    </StackPanel>
+                    <!--#endregion-->
+
+                    <!--#region Dialog Closing-->
+                    <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="15" >
+                        <Button Content="Abbrechen" Command="{x:Static md:DialogHost.CloseDialogCommand}"  Style="{DynamicResource MaterialDesignFlatButton}" Margin="4" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="20"/>
+                        <Button Content="Hinzufügen" Command="{x:Static md:DialogHost.CloseDialogCommand}" CommandParameter="{Binding}" Style="{DynamicResource MaterialDesignFlatButton}" Margin="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" />
+                    </StackPanel>
+                    <!--#endregion-->
+
+                </StackPanel>
+            </DataTemplate>
+            <!--#endregion-->
+
+            <!--#region Modify Food Entry Dialog-->
+            <DataTemplate DataType="{x:Type commonsViews:FoodEntryModificationView}">
+                <GroupBox Header="Alle Lebensmitteleinträge" FontSize="18">
+                    <StackPanel Orientation="Vertical" Margin="10">
+
+
+                        <DataGrid ItemsSource="{Binding AllEntries, Mode=TwoWay}"
+                                  Margin="10"
+                          IsReadOnly="True"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserSortColumns="False" >
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                                    <Setter Property="FontSize" Value="18"/>
+                                    <Setter Property="FontStyle" Value="Normal" />
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="Margin" Value="4" />
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.Columns>
+                                <!--<DataGridTextColumn Header="ID" Binding="{Binding ID, StringFormat=N0}" FontSize="14" />-->
+                                <DataGridTextColumn Header="Datum" Binding="{Binding Date, Converter={StaticResource DateTimeShortener }}" FontSize="16" />
+                                <DataGridTextColumn Header="Lebensmittel" Binding="{Binding Food}" FontSize="16" />
+                                <DataGridTextColumn Header="Gewicht [g]" Binding="{Binding Weight, StringFormat=N1}" FontSize="16" />
+                                <DataGridTextColumn Header="Proteine" Binding="{Binding Proteins, StringFormat=N1}" FontSize="16" />
+                                <DataGridTextColumn Header="Kohlehydrate" Binding="{Binding Carbs, StringFormat=N1}" FontSize="16" />
+                                <DataGridTextColumn Header="Fett" Binding="{Binding Fats, StringFormat=N1}" FontSize="16" />
+                                <DataGridTextColumn Header="Kalorien" Binding="{Binding Calories, StringFormat=N1}" FontSize="16" />
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Click="ButtonRemoveFoodEntry_Click" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <md:PackIcon Kind="Delete" />
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <Button FontSize="20" Content="Beenden" Command="{x:Static md:DialogHost.CloseDialogCommand}"  Style="{DynamicResource MaterialDesignFlatButton}" Margin="4" VerticalAlignment="Center" HorizontalAlignment="Center" />
+
+                    </StackPanel>
+                </GroupBox>
+            </DataTemplate>
+            <!--#endregion-->
+
+        </ResourceDictionary>
+
+    </Window.Resources>
+
+    <Grid>
+        <md:DialogHost Identifier="RootDialog"  DialogClosing="DialogHost_DialogClosing" x:Name="RootDialog">
+
+            <Grid>
+                <!--#region Main Grid Definitions-->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"  />
+                    <ColumnDefinition Width="*"  />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!--#endregion-->
+
+                <!--#region PieChart-->
+                <GroupBox x:Name="grpFoods"
+                  Header="Kalorienverteilung"
+                  Grid.Row="0" 
+                  Grid.Column="0" 
+                  Margin="10" >
+                    <Grid>
+                        <charts:PieChart  />
+
+                    </Grid>
+
+                </GroupBox>
+                <!--#endregion-->
+
+                <!--#region Progressbars-->
+                <GroupBox x:Name="grpProgressbars"
+                  Header="Makronährstoffe und Kalorien"
+                  DockPanel.Dock="Right" 
+                  Grid.Row="0" 
+                  Grid.Column="1" 
+                  Margin="10" >
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                        <!--#region Grid Definitions-->
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <!--#endregion-->
+
+                        <!--#region CalorieProgress-->
+
+                        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0" >
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Kalorien: " HorizontalAlignment="Left"  />
+                                <TextBlock x:Name="lblCalorieProgress" Text="{Binding CalorieProgressDisplayString}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <ProgressBar x:Name="prgCalories"
+                                         BorderBrush="Transparent"
+                                         BorderThickness="2"
+                                         Style="{DynamicResource MaterialDesignLinearProgressBar}"
+                                         Height="30"
+                                         Foreground="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Value, Converter={StaticResource ProgressForegroundConverter}, ConverterParameter=#2196f3}"
+                                         Background="Transparent"
+                                         Value="{Binding CalorieProgress}"  />
+                        </StackPanel>
+                        <!--#endregion-->
+
+                        <!--#region ProteinProgress-->
+                        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0"  >
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Proteine: " HorizontalAlignment="Left" />
+                                <TextBlock x:Name="lblProteinProgress" Text="{Binding ProteinProgressDisplayString}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <ProgressBar x:Name="prgProteins"
+                                         BorderBrush="Transparent"
+                                         BorderThickness="2"
+                                         Style="{DynamicResource MaterialDesignLinearProgressBar}"
+                                             Height="30"
+                                             Foreground="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Value, Converter={StaticResource ProgressForegroundConverter}, ConverterParameter=#2196f3}"
+                                             Background="Transparent"
+                                             Value="{Binding ProteinProgress}"  />
+                        </StackPanel>
+                        <!--#endregion-->
+
+                        <!--#region CarbProgress-->
+                        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="0"  >
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Kohlehydrate: " HorizontalAlignment="Left" />
+                                <TextBlock x:Name="lblCarbProgress" Text="{Binding CarbProgressDisplayString}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <ProgressBar x:Name="prgCarbs" 
+                                         BorderBrush="Transparent"
+                                         BorderThickness="2"
+                                           Height="30"
+                                 Style="{DynamicResource MaterialDesignLinearProgressBar}" 
+                                 Foreground="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Value, Converter={StaticResource ProgressForegroundConverter}, ConverterParameter=#2196f3}" 
+                                             Background="Transparent"
+                                             Value="{Binding CarbProgress}"  />
+                        </StackPanel>
+                        <!--#endregion-->
+
+                        <!--#region FatProgress-->
+                        <StackPanel Orientation="Vertical" Grid.Row="3" Grid.Column="0" >
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Fette: " HorizontalAlignment="Left" />
+                                <TextBlock x:Name="lblFatProgress" Text="{Binding FatProgressDisplayString}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <ProgressBar x:Name="prgFats" 
+                                         BorderBrush="Transparent"
+                                         BorderThickness="2"
+                                             Height="30"
+                                 Style="{DynamicResource MaterialDesignLinearProgressBar}"
+                                 Foreground="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Value, Converter={StaticResource ProgressForegroundConverter}, ConverterParameter=#2196f3}"
+                                             Background="Transparent"
+                                 Value="{Binding FatProgress}"  />
+                        </StackPanel>
+                        <!--#endregion-->
+
+                        <Button Click="OpenStatistics_Click" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="0" Style="{DynamicResource MaterialDesignFloatingActionAccentButton}">
+                            <md:PackIcon Kind="ChartAreaspline" />
+                        </Button>
+                        <Button Click="OpenSettings_Click" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Style="{DynamicResource MaterialDesignFloatingActionAccentButton}" Margin="0,60,0,0">
+                            <md:PackIcon Kind="Settings" />
+                        </Button>
+                    </Grid>
+
+
+                </GroupBox>
+
+                <!--#endregion-->
+
+                <!--#region Food Intake Today-->
+                <GroupBox x:Name="grpFoodlist"
+                    Header="Heutige Lebensmittel"
+                    Margin="10"
+                    Grid.Row="1" 
+                    Grid.Column="0" >
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <!--#region Grid Definitions-->
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <!--#endregion-->
+                        <!--#region Food entries of today-->
+                        <DataGrid
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        ItemsSource="{Binding FoodEntriesToday}"
+                        HorizontalContentAlignment="Center"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="false"
+                        IsReadOnly="True"
+                        Margin="10"
+                        md:DataGridAssist.CellPadding="4"
+                        md:DataGridAssist.ColumnHeaderPadding="4">
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                                    <Setter Property="FontSize" Value="18"/>
+                                    <Setter Property="FontStyle" Value="Normal" />
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="Margin" Value="4" />
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Lebensmittel" Binding="{Binding Food}" FontSize="16" />
+                                <DataGridTextColumn Header="Gewicht [g]" Binding="{Binding Weight}" FontSize="16" />
+                                <DataGridTextColumn Header="Proteine [g]" Binding="{Binding Proteins, StringFormat=N1}" FontSize="16" />
+                                <DataGridTextColumn Header="Kohlehydrate [g]" Binding="{Binding Carbs, StringFormat=N1}" FontSize="16" />
+                                <DataGridTextColumn Header="Fett [g]" Binding="{Binding Fats, StringFormat=N1}" FontSize="16" />
+                                <DataGridTextColumn Header="Kalorien" Binding="{Binding Calories, StringFormat=N1}" FontSize="16" />
+                            </DataGrid.Columns>
+
+                        </DataGrid>
+
+                        <!--#endregion-->
+
+                        <!--#region Buttons-->
+                        <Button Click="btnOpenFoodDialogForManipulation_Click" 
+                                Style="{DynamicResource MaterialDesignFloatingActionAccentButton}"
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                VerticalAlignment="Top" >
+                            <md:PackIcon Kind="Delete" />
+                        </Button>
+                        <Button 
+                    x:Name="btnAddFood"
+                            Grid.Row="0"
+                        Grid.Column="1"
+                    VerticalAlignment="Bottom"
+                    Click="btnOpenFoodDialog_Click"
+                    Style="{DynamicResource MaterialDesignFloatingActionAccentButton}" >
+                            <md:PackIcon Kind="Add" />
+                        </Button>
+
+                        <!--#endregion-->
+
+                    </Grid>
+                </GroupBox>
+
+                <!--#endregion-->
+
+                <!--#region Training Calendar-->
+                <GroupBox x:Name="grpTraining"
+                    
+                    Header="Trainingseditor"
+                    Margin="10"
+                    Grid.Row="1"
+                    Grid.Column="1" >
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                        <!--#region Grid Definitions-->
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <!--#endregion-->
+
+                        <!--#region Calendar-->
+                        <Viewbox Grid.Column="0">
+                            <Calendar x:Name="TrainingCalendar"
+                                  DisplayDateStart="1/1/2019"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  SelectionMode="SingleDate"
+                                  SelectedDatesChanged="Calendar_SelectedDatesChanged"  >
+                                <Calendar.CalendarDayButtonStyle>
+                                    <Style TargetType="CalendarDayButton" BasedOn="{StaticResource {x:Type CalendarDayButton}}">
+                                        <EventSetter Event="Loaded" Handler="calendarButton_Loaded" />
+                                    </Style>
+                                </Calendar.CalendarDayButtonStyle>
+                            </Calendar>
+                        </Viewbox>
+                        <!--#endregion-->
+
+
+                        <!--#region Display today's Training-->
+                        <DockPanel  Grid.Column="1" DataContext="{Binding WorkoutOfToday}">
+
+                            <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+
+                                <!--#region Buttons-->
+                                <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="15"  >
+                                    <Button Content="Übung hinzufügen" x:Name="btnAddExercise" Background="{DynamicResource PrimaryHueMidBrush}" Foreground="White" Click="btnNewExercise_Click"  Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left" Margin="4" FontSize="16"/>
+                                    <Button Content="Speichern"  Click="SaveTraining_Click" Style="{DynamicResource MaterialDesignFlatButton}" Background="{DynamicResource PrimaryHueMidBrush}" Foreground="White" Margin="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="16"/>
+                                </StackPanel>
+                                <!--#endregion-->
+
+                            </StackPanel>
+
+                            <ScrollViewer DockPanel.Dock="Bottom" >
+
+                                <ListBox ItemsSource="{Binding ExerciseList}" x:Name="listUebungen" HorizontalAlignment="Center" >
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Expander  FontSize="16">
+                                                <Expander.Header>
+                                                    <TextBlock Text="{Binding SelectedExercise.ExerciseName}" FontSize="16" HorizontalAlignment="Left" />
+                                                </Expander.Header>
+                                                <Border Margin="5"  BorderThickness="1" BorderBrush="Black" CornerRadius="3">
+                                                    <!--#region Uebungsliste-->
+                                                    <StackPanel Margin="10" Orientation="Vertical">
+                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+
+                                                            <ComboBox 
+                                                                      ItemsSource="{Binding Path=DataContext.AllExercises, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:Dashboard}}"
+                                                                      HorizontalAlignment="Center"
+                                                                      HorizontalContentAlignment="Center"
+                                                                      DisplayMemberPath="ExerciseName"
+                                                                FontSize="16"
+                                                                      VerticalAlignment="Center" 
+                                                                      Width="150" >
+                                                                <ComboBox.SelectedItem>
+                                                                    <MultiBinding Converter="{StaticResource ExerciseCompareConverter}"  >
+                                                                        <Binding Path="DataContext.AllExercises" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=local:Dashboard}" />
+                                                                        <Binding Path="SelectedExercise" />
+                                                                    </MultiBinding>
+                                                                </ComboBox.SelectedItem>
+                                                            </ComboBox>
+
+                                                            <Button 
+                                                                    x:Name="btnRemoveExercise"
+                                                                    Style="{DynamicResource MaterialDesignFlatButton}"
+                                                                    Click="ButtonRemoveExercise_Click"
+                                                                    Margin="4" 
+                                                                    VerticalAlignment="Center" 
+                                                                    HorizontalAlignment="Right" >
+                                                                <md:PackIcon Kind="Delete"/>
+                                                            </Button>
+                                                        </StackPanel>
+
+
+                                                        <DataGrid 
+                                                            ItemsSource="{Binding Sets, Mode=TwoWay}"
+                                                            HorizontalContentAlignment="Center"
+                                                            AutoGenerateColumns="False"
+                                                            CanUserDeleteRows="True"
+                                                            CanUserAddRows="True"
+                                                            Margin="10"
+                                                            md:DataGridAssist.CellPadding="4"
+                                                            md:DataGridAssist.ColumnHeaderPadding="4">
+                                                            <DataGrid.ColumnHeaderStyle>
+                                                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                                                                    <Setter Property="FontSize" Value="14"/>
+                                                                    <Setter Property="FontStyle" Value="Normal" />
+                                                                </Style>
+                                                            </DataGrid.ColumnHeaderStyle>
+                                                            <DataGrid.Columns>
+                                                                <DataGridTextColumn Header="Gewicht" Binding="{Binding Weight, Mode=TwoWay}" FontSize="16" IsReadOnly="False" />
+                                                                <DataGridTextColumn Header="Wiederholungen" Binding="{Binding Reps, Mode=TwoWay}" FontSize="16" IsReadOnly="False" />
+                                                            </DataGrid.Columns>
+                                                        </DataGrid>
+                                                    </StackPanel>
+                                                    <!--#endregion-->
+                                                </Border>
+                                            </Expander>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+
+                            </ScrollViewer>
+                        </DockPanel>
+                        <!--#endregion-->
+
+                    </Grid>
+                </GroupBox>
+                <!-- #endregion-->
+
+
+
+            </Grid>
+        </md:DialogHost>
+
+    </Grid>
+</Window>

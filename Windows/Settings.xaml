@@ -1,0 +1,329 @@
+﻿<Window x:Class="HealthAssistant.Windows.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:HealthAssistant"
+        xmlns:commonsClasses="clr-namespace:Commons.Classes;assembly=Commons"
+        xmlns:commonsViews="clr-namespace:Commons.Views;assembly=Commons"
+        xmlns:services="clr-namespace:HealthAssistant.Services"
+        xmlns:commonsServices="clr-namespace:Commons.Services;assembly=Commons"
+        xmlns:charts="clr-namespace:HealthAssistant.Charts"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="20"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        WindowState="Maximized"
+        Title="Einstellungen">
+    <Window.Resources>
+        <services:StringToDoubleConverter x:Key="StringToDoubleConverter"/>
+        <commonsServices:DateTimeShortConverter x:Key="DateTimeShortConverter" />
+    </Window.Resources>
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--#region Lebensmitteleditor-->
+        <GroupBox Header="Lebensmitteleditor" Grid.Row="0" Grid.Column="0" Margin="10" FontSize="18">
+            <Grid>
+                <DataGrid ItemsSource="{Binding AllFoods}"
+                              x:Name="dGFoods"
+                                  Margin="10"
+                          IsReadOnly="False"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="True"
+                          CanUserDeleteRows="False"
+                          CanUserSortColumns="False" >
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                            <Setter Property="FontSize" Value="18"/>
+                            <Setter Property="FontStyle" Value="Normal" />
+                            <Setter Property="FontWeight" Value="Bold" />
+                            <Setter Property="Margin" Value="4" />
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Bezeichnung" Binding="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="14" />
+                        <!--<DataGridTextColumn Header="Proteine pro 100 g" Binding="{Binding Proteingehalt, Mode=TwoWay, StringFormat=N1, UpdateSourceTrigger=PropertyChanged}" FontSize="14" />-->
+                        <DataGridTemplateColumn Header="Proteine pro 100 g" >
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox  PreviewTextInput="NumberValidationTextBox" Text="{Binding Proteincontent, Mode=TwoWay, StringFormat=N1, UpdateSourceTrigger=PropertyChanged}" FontSize="14" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Kohlehydrate pro 100 g" >
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox  PreviewTextInput="NumberValidationTextBox" Text="{Binding Carbcontent, Mode=TwoWay, StringFormat=N1, UpdateSourceTrigger=PropertyChanged}" FontSize="14" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Fett pro 100 g" >
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox  PreviewTextInput="NumberValidationTextBox" Text="{Binding Fatcontent, Mode=TwoWay, StringFormat=N1, UpdateSourceTrigger=PropertyChanged}" FontSize="14" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <!--<DataGridTextColumn Header="Kohlehydrate pro 100 g" Binding="{Binding Kohlenhydratgehalt, Mode=TwoWay, StringFormat=N1, UpdateSourceTrigger=PropertyChanged}"  FontSize="14" />
+                        <DataGridTextColumn Header="Fett pro 100 g" Binding="{Binding Fettgehalt, StringFormat=N1,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="14" />-->
+                        <DataGridTextColumn Header="Kalorien pro 100 g" Binding="{Binding Calories, StringFormat=N1}" FontSize="14" IsReadOnly="True" />
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Click="ButtonSaveFood_Click" CommandParameter="{Binding ElementName=dGFoods}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <md:PackIcon Kind="ContentSave" />
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Click="ButtonRemoveFood_Click" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <md:PackIcon Kind="Delete" />
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </GroupBox>
+
+        <!--#endregion-->
+
+        <!--#region Übungseditor-->
+        <GroupBox Header="Übungseditor" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Margin="10">
+            <Grid>
+                <DataGrid ItemsSource="{Binding AllExercises,Mode=TwoWay}"
+                              x:Name="dGExercises"
+                                  Margin="10"
+                          IsReadOnly="False"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="True"
+                          CanUserDeleteRows="False"
+                          CanUserSortColumns="True" >
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                            <Setter Property="FontSize" Value="18"/>
+                            <Setter Property="FontStyle" Value="Normal" />
+                            <Setter Property="FontWeight" Value="Bold" />
+                            <Setter Property="Margin" Value="4" />
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Bezeichnung" Binding="{Binding ExerciseName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="14" />
+                        <DataGridTextColumn Header="Muskelgruppe" Binding="{Binding MuscleGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="14" />
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Click="ButtonSaveExercise_Click" CommandParameter="{Binding ElementName=dGExercises}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <md:PackIcon Kind="ContentSave" />
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Click="ButtonRemoveExercise_Click" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <md:PackIcon Kind="Delete" />
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </GroupBox>
+
+        <!--#endregion-->
+
+
+        <!--#region Gewichtseditor-->
+        <!--<GroupBox Header="Gewichteditor" Grid.Row="0" Grid.Column="1" Margin="10">
+            <Grid>
+                <DataGrid ItemsSource="{Binding AlleGewichte, Mode=TwoWay}"
+                              x:Name="dGWeights"
+                                  Margin="10"
+                          IsReadOnly="False"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="True"
+                          CanUserDeleteRows="False"
+                          CanUserSortColumns="True" >
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                            <Setter Property="FontSize" Value="18"/>
+                            <Setter Property="FontStyle" Value="Normal" />
+                            <Setter Property="FontWeight" Value="Bold" />
+                            <Setter Property="Margin" Value="4" />
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Datum" Binding="{Binding Datum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DateTimeShortConverter}}" FontSize="14" />
+                        <DataGridTextColumn Header="Gewicht in kg" Binding="{Binding Gewicht, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="14" />
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Click="ButtonSaveBodyweight_Click" CommandParameter="{Binding ElementName=dGWeights}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <md:PackIcon Kind="ContentSave" />
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Click="ButtonRemoveBodyweight_Click" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <md:PackIcon Kind="Delete" />
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </GroupBox>-->
+        <!--#endregion-->
+
+        <!--#region Kalorienziel-->
+
+        <GroupBox Header="Makronährstoffe und Gewicht" Grid.Row="1" Grid.Column="0" Margin="10">
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <!--#region Sollwerte-->
+                <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center">
+                    <TextBlock Text="Proteinziel in g/kg Körpergewicht:" 
+                               Margin="10" Style="{DynamicResource MaterialDesignTextBlock}" 
+                               VerticalAlignment="Center" 
+                               HorizontalAlignment="Center" 
+                               FontSize="18"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBox x:Name="txtProteinTarget" 
+                                 PreviewTextInput="NumberValidationTextBox" 
+                                 Text="{Binding TargetProteins, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 HorizontalAlignment="Center" 
+                                 Style="{DynamicResource MaterialDesignTextBox}" 
+                                 Margin="10" 
+                                 VerticalAlignment="Center" 
+                                 MaxLength="4" 
+                                 Width="40" 
+                                 HorizontalContentAlignment="Center"/>
+                        <Button Content="Speichern" 
+                            x:Name="btnProteinarget" 
+                            Click="btnProteinarget_Click" 
+                            FontSize="20" 
+                            Style="{DynamicResource MaterialDesignFlatButton}" 
+                            Margin="4" 
+                            VerticalAlignment="Center" 
+                            HorizontalAlignment="Center" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Grid.Row="1" Grid.Column="0">
+                    <TextBlock Text="Kohlehydratziel in g/kg Körpergewicht:" 
+                               Margin="10" Style="{DynamicResource MaterialDesignTextBlock}" 
+                               VerticalAlignment="Center" 
+                               HorizontalAlignment="Center"  
+                               FontSize="18"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBox x:Name="txtCarbTarget" 
+                                 PreviewTextInput="NumberValidationTextBox" 
+                                 Text="{Binding TargetCarbs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 Style="{DynamicResource MaterialDesignTextBox}" 
+                                 Margin="10" 
+                                 VerticalAlignment="Center" 
+                                HorizontalAlignment="Center"
+                                 MaxLength="4" 
+                                 Width="40" 
+                                 HorizontalContentAlignment="Center"/>
+                        <Button Content="Speichern" x:Name="btnCarbTarget" Click="btnCarbTarget_Click" FontSize="20" Style="{DynamicResource MaterialDesignFlatButton}" Margin="4" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Grid.Row="2" Grid.Column="0">
+                    <TextBlock Text="Fettziel in g/kg Körpergewicht:" 
+                               Margin="10" Style="{DynamicResource MaterialDesignTextBlock}" 
+                               VerticalAlignment="Center" 
+                               HorizontalAlignment="Center"  
+                               FontSize="18"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBox x:Name="txtFatTarget" PreviewTextInput="NumberValidationTextBox" Text="{Binding TargetFats, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignTextBox}" Margin="10" VerticalAlignment="Center" MaxLength="4" Width="40" HorizontalContentAlignment="Center" HorizontalAlignment="Center"/>
+                        <Button Content="Speichern" x:Name="btnFatTarget" Click="btnFatTarget_Click" FontSize="20" Style="{DynamicResource MaterialDesignFlatButton}" Margin="4" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </StackPanel>
+                <!--#endregion-->
+                <!--#region Gewichte-->
+                <DataGrid ItemsSource="{Binding AllWeights, Mode=TwoWay}"
+                          Grid.Column="1"
+                          Grid.Row="0"
+                          Grid.RowSpan="3"
+                              x:Name="dGWeights"
+                                  Margin="10"
+                          IsReadOnly="False"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="True"
+                          CanUserDeleteRows="False"
+                          CanUserSortColumns="True" >
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                            <Setter Property="FontSize" Value="18"/>
+                            <Setter Property="FontStyle" Value="Normal" />
+                            <Setter Property="FontWeight" Value="Bold" />
+                            <Setter Property="Margin" Value="4" />
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Datum" Binding="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DateTimeShortConverter}}" FontSize="14" />
+                        <DataGridTextColumn Header="Gewicht in kg" Binding="{Binding Weight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="14" />
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Click="ButtonSaveBodyweight_Click" CommandParameter="{Binding ElementName=dGWeights}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <md:PackIcon Kind="ContentSave" />
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Click="ButtonRemoveBodyweight_Click" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <md:PackIcon Kind="Delete" />
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <!--#endregion-->
+            </Grid>
+        </GroupBox>
+        <!--#endregion-->
+        <Button Click="Button_Click" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="0" Style="{DynamicResource MaterialDesignFloatingActionAccentButton}" Margin="20">
+            <md:PackIcon Kind="ArrowLeft" />
+        </Button>
+
+    </Grid>
+</Window>
