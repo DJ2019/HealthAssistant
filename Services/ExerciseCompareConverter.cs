@@ -13,7 +13,7 @@ namespace HealthAssistant.Services
 {
     public class ExerciseCompareConverter : IMultiValueConverter
     {
-
+        //Gets the selected exercise by name 
 
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {

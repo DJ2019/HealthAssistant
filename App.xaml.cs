@@ -15,30 +15,29 @@ using System.Windows.Markup;
 
 namespace HealthAssistant
 {
-    /// <summary>
-    /// Interaktionslogik für "App.xaml"
-    /// </summary>
     public partial class App : Application
     {
             public App()
             {
-                PersistentDataProvider.Current.allTableNames = PersistentDataProvider.Current.databaseService.GetAllTables();
                 #region define Culture
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("de-AT");
                 Thread.CurrentThread.CurrentUICulture = new CultureInfo("de-AT");
                 FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(
                 XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+            #endregion
+
+                #region Create Persistent Data Object
+                PersistentData context = new PersistentData();
+                PersistentDataProvider.Current.allTableNames = PersistentDataProvider.Current.databaseService.GetAllTables();
                 #endregion
 
-                PersistentData context = new PersistentData();
-
-                #region Food initialisieren
-                if (!PersistentDataProvider.Current.databaseService.GetAllTables().Contains("Foods"))
+                #region Initialise Foods
+                if (!PersistentDataProvider.Current.allTableNames.Contains("Foods"))
                 {
                     PersistentDataProvider.Current.databaseService.CreateTable("Foods", typeof(Food));
 
-                    #region Foodliste
-                    List<Food> lebensmittelHelperListe = new List<Food>()
+                    #region FoodList
+                    List<Food> foodHelperList = new List<Food>()
                     {
                     new Food("Huhn", 23, 1, 1),
                     new Food("Faschiertes (mager)", 20.5, 0, 7),
@@ -71,28 +70,27 @@ namespace HealthAssistant
                     };
                     #endregion
 
-                    foreach (Food s in lebensmittelHelperListe)
+                    foreach (Food s in foodHelperList)
                     {
                         PersistentDataProvider.Current.databaseService.InsertValues("Foods", typeof(Food), s);
                     }
                 }
-
                 #endregion
 
-                #region Gewicht initialisieren
-                if (!PersistentDataProvider.Current.databaseService.GetAllTables().Contains("Bodyweights"))
+                #region Initialise Bodyweight
+                if (!PersistentDataProvider.Current.allTableNames.Contains("Bodyweights"))
                 {
                     PersistentDataProvider.Current.databaseService.CreateTable("Bodyweights", typeof(Bodyweight));
                     PersistentDataProvider.Current.databaseService.InsertValues("Bodyweights", typeof(Bodyweight), new Bodyweight(DateTime.Today.ToString(), 85));
                 }
                 #endregion
 
-                #region Übungen initialisieren
-                if (!PersistentDataProvider.Current.databaseService.GetAllTables().Contains("Exercises"))
+                #region Initialise Exercises
+                if (!PersistentDataProvider.Current.allTableNames.Contains("Exercises"))
                 {
 
                     PersistentDataProvider.Current.databaseService.CreateTable("Exercises", typeof(Exercise));
-                    List<Exercise> uebungenHelperListe = new List<Exercise>()
+                    List<Exercise> exerciseHelperList = new List<Exercise>()
                     {
                         new Exercise("Bankdrücken", "Brust"),
                         new Exercise("Bankdrücken schräg", "Brust"),
@@ -117,7 +115,7 @@ namespace HealthAssistant
                         new Exercise("Kniebeugen", "Beine"),
                         new Exercise("Wadendrücker", "Beine")
                     };
-                    foreach (Exercise s in uebungenHelperListe)
+                    foreach (Exercise s in exerciseHelperList)
                     {
                         PersistentDataProvider.Current.databaseService.InsertValues("Exercises", typeof(Exercise), s);
                     }
@@ -126,43 +124,37 @@ namespace HealthAssistant
 
                 #endregion
 
-                #region Chartvalues initialisieren
+                #region Initialise Chartvalues 
                 PersistentDataProvider.Current.Proteinvalue = new ChartValues<double>();
                 PersistentDataProvider.Current.Carbvalue = new ChartValues<double>();
                 PersistentDataProvider.Current.Fatvalue = new ChartValues<double>();
                 #endregion
 
-                #region Sollwerte initialisieren
-                if (!PersistentDataProvider.Current.databaseService.GetAllTables().Contains("Targetproteins"))
+                #region Initialise Target Values
+                if (!PersistentDataProvider.Current.allTableNames.Contains("Targetproteins"))
                 {
                     PersistentDataProvider.Current.databaseService.CreateTable("Targetproteins", typeof(double));
                     PersistentDataProvider.Current.databaseService.InsertValues("Targetproteins", typeof(double), 2);
                 }
-                if (!PersistentDataProvider.Current.databaseService.GetAllTables().Contains("Targetcarbs"))
+                if (!PersistentDataProvider.Current.allTableNames.Contains("Targetcarbs"))
                 {
                     PersistentDataProvider.Current.databaseService.CreateTable("Targetcarbs", typeof(double));
                     PersistentDataProvider.Current.databaseService.InsertValues("Targetcarbs", typeof(double), 2);
                 }
-                if (!PersistentDataProvider.Current.databaseService.GetAllTables().Contains("Targetfats"))
+                if (!PersistentDataProvider.Current.allTableNames.Contains("Targetfats"))
                 {
                     PersistentDataProvider.Current.databaseService.CreateTable("Targetfats", typeof(double));
                     PersistentDataProvider.Current.databaseService.InsertValues("Targetfats", typeof(double), 1.2);
                 }
                 #endregion
 
-                #region Table Creation
-                //PersistentDataProvider.Current.databaseService.CreateTable("Food", typeof(Food));
-
-                //PersistentDataProvider.Current.databaseService.CreateTable("Gewichte", typeof(Bodyweight));
-
-                //PersistentDataProvider.Current.databaseService.CreateTable("Übungen", typeof(Exercise));
-
+                #region Table Creation of initially empty tables
                 PersistentDataProvider.Current.databaseService.CreateTable("Foodentries", typeof(FoodEntry));
 
                 PersistentDataProvider.Current.databaseService.CreateTable("Workouts", typeof(Workout));
                 #endregion
 
-                #region Variablen für Ernährung initialisieren
+                #region Initialise Nutrition Variables
                 PersistentDataProvider.Current.AllFoods = new ObservableCollection<Food>(PersistentDataProvider.Current.databaseService.GetAllFoods("Foods"));
                 PersistentDataProvider.Current.AllWeights = new ObservableCollection<Bodyweight>(PersistentDataProvider.Current.databaseService.GetAllBodyweights("Bodyweights"));
                 PersistentDataProvider.Current.FoodEntriesToday = new ObservableCollection<FoodEntry>(PersistentDataProvider.Current.databaseService.GetFoodEntriesOfToday("Foodentries"));
@@ -171,7 +163,7 @@ namespace HealthAssistant
                 PersistentDataProvider.Current.TargetFats = PersistentDataProvider.Current.databaseService.GetTargetValue("Targetfats");
                 #endregion
 
-                #region Trainingsvariablen initialisieren
+                #region Initialise Workout Variables
 
                 PersistentDataProvider.Current.AllExercises = new ObservableCollection<Exercise>(PersistentDataProvider.Current.databaseService.GetAllExercises("Exercises"));
 

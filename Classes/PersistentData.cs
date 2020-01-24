@@ -7,11 +7,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HealthAssistant.Classes
 {
+    //static Provider of current PersistentData instance
     public static class PersistentDataProvider
     {
         private static PersistentData g_Current = new PersistentData();
@@ -28,6 +27,8 @@ namespace HealthAssistant.Classes
 
     public class PersistentData : INotifyPropertyChanged
     {
+        //Initialised in App.xaml.cs
+
         public event PropertyChangedEventHandler PropertyChanged;
         public DBService databaseService = new DBService();
 
@@ -36,19 +37,19 @@ namespace HealthAssistant.Classes
         #region Nutrition
         #region Bodyweight
 
+        //List of all stored bodyweights
         private ObservableCollection<Bodyweight> allWeights;
-
         public ObservableCollection<Bodyweight> AllWeights
         {
             get => allWeights;
             set
             {
                 value = new ObservableCollection<Bodyweight>(value.OrderBy(x => x.Date));
-
                 CurrentBodyWeight = value.Any() ? value.ToList().OrderByDescending(x => x.Date).FirstOrDefault().Weight : 0;
                 RaisePropertyChange(ref allWeights, value);
             }
         }
+
 
         private double currentBodyweight;
         public double CurrentBodyWeight
@@ -65,7 +66,7 @@ namespace HealthAssistant.Classes
         }
         #endregion
 
-        #region Sollwerte
+        #region Target Values
 
         private double targetCalories;
         private double targetProteins;
@@ -132,6 +133,8 @@ namespace HealthAssistant.Classes
         #endregion
 
         #region Progressbar Values
+        // Progressbar section of Dashboard
+
         private double calorieProgress;
         private string calorieProgressDisplayString;
         private double proteinProgress;
@@ -224,6 +227,8 @@ namespace HealthAssistant.Classes
         #endregion
 
         #region Today's food intake
+        //For Pie Chart value calculation
+
         private double proteingramsToday;
         public double ProteingramsToday
         {
@@ -305,7 +310,7 @@ namespace HealthAssistant.Classes
         }
         #endregion
 
-        #region Chartvalues
+        #region PieChart-Values
         private ChartValues<double> proteinvalue;
         private ChartValues<double> carbvalue;
         private ChartValues<double> fatvalue;
@@ -372,6 +377,7 @@ namespace HealthAssistant.Classes
             set => RaisePropertyChange(ref workoutOfToday, value);
         }
 
+        //All days with a stored workout 
         private ObservableCollection<DateTime> workoutDays;
         public ObservableCollection<DateTime> WorkoutDays
         {

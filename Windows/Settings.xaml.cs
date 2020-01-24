@@ -1,25 +1,12 @@
 ﻿using Commons.Classes;
 using HealthAssistant.Classes;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace HealthAssistant.Windows
 {
-    /// <summary>
-    /// Interaktionslogik für Settings.xaml
-    /// </summary>
     public partial class Settings : Window
     {
         public Settings()
@@ -42,12 +29,10 @@ namespace HealthAssistant.Windows
             try
             {
                 var item = (FrameworkElement)e.OriginalSource;
-            var context = (Food)item.DataContext;
-
+                var context = (Food)item.DataContext;
             
                 PersistentDataProvider.Current.databaseService.DeleteFromTable(context.ID.ToString(), "ID", "Foods");
                 PersistentDataProvider.Current.AllFoods.Remove(context);
-
             }
             catch (System.InvalidOperationException)
             {
@@ -67,8 +52,7 @@ namespace HealthAssistant.Windows
             {
                 var item = (FrameworkElement)e.OriginalSource;
 
-            var context = (Food)item.DataContext;
-
+                var context = (Food)item.DataContext;
             
                 Food updated = new Food(context.Name, context.Proteincontent, context.Carbcontent, context.Fatcontent);
                 PersistentDataProvider.Current.databaseService.DeleteFromTable(context.ID.ToString(), "ID", "Foods");
@@ -86,7 +70,6 @@ namespace HealthAssistant.Windows
         #endregion
 
         #region Remove Exercise
-
         private void ButtonRemoveExercise_Click(object sender, RoutedEventArgs e)
         {
             var item = (FrameworkElement)e.OriginalSource;
@@ -111,7 +94,6 @@ namespace HealthAssistant.Windows
         {
 
             var item = (FrameworkElement)e.OriginalSource;
-
             var context = (Exercise)item.DataContext;
 
             try

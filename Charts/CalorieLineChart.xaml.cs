@@ -8,23 +8,12 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace HealthAssistant.Charts
 {
-    /// <summary>
-    /// Interaktionslogik für CalorieLineChart.xaml
-    /// </summary>
+    //LineChart to display calorie intake
     public partial class CalorieLineChart : UserControl, INotifyPropertyChanged
     {
         #region Variables

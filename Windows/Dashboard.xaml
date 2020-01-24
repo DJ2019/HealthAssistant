@@ -1,4 +1,4 @@
-﻿<Window x:Class="HealthAssistant.Windows.Dashboard"
+﻿ <Window x:Class="HealthAssistant.Windows.Dashboard"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -57,27 +57,21 @@
                     </StackPanel>
                     <!--#endregion-->
 
-                    <!--<telerik:RadAutoCompleteBox
-                        WatermarkContent="Lebensmittelnamen eingeben..."
-                        ItemsSource="{Binding LebensmittelAuswahl}"
-                        SelectedItem="{Binding AusgewaehltesLebensmittel, Mode=TwoWay}"
-                        x:Name="telerikAutocompleteBox1"
-                        TextSearchMode="Contains"
-                        AutoCompleteMode="Suggest"
-                        TextSearchPath="Name"
-                        Background="Black"
-                        SelectionMode="Single"
-                        VerticalAlignment="Top"
-                        Margin="0,20,0,0"
-                        Height="100"
-                        DropDownItemTemplate="{StaticResource FoodSearchAutoComplete}"
-                        BorderBrush="DeepSkyBlue"
-                        BorderThickness="10" >
-                    </telerik:RadAutoCompleteBox>-->
-                    <!--#region FoodList-->
+                    <TextBox x:Name="txtFilter" Margin="15,5"
+                                 TextChanged="TextBox_TextChanged"
+                             FontSize="16"
+                                 Text="Suchfeld..."
+                             Style="{DynamicResource MaterialDesignTextBox}"
+                             GotMouseCapture="txtFilter_GotFocus"
+                                  />
+                    <!--GotFocus="Suchfeld_GotFocus"-->
+                    
+                    
                     <Border BorderThickness="1" BorderBrush="DeepSkyBlue" Margin="10">
+                        
                         <ScrollViewer Height="200" BorderBrush="LightSlateGray" Margin="10">
-                            <ListBox   ItemsSource="{Binding FoodSelections}" SelectedItem="{Binding SelectedFood, Mode=TwoWay}" >
+
+                            <ListBox ItemsSource="{Binding FoodSelections, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedFood, Mode=TwoWay}" >
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Width="300">

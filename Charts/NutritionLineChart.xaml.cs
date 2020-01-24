@@ -8,23 +8,12 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace HealthAssistant.Charts
 {
-    /// <summary>
-    /// Interaktionslogik für NutritionLineChart.xaml
-    /// </summary>
+    //Line Chart for macro nutrient intake
     public partial class NutritionLineChart : UserControl , INotifyPropertyChanged
     {
         #region Variables
@@ -89,49 +78,7 @@ namespace HealthAssistant.Charts
 
             DataContext = this;
 
-            #region auskommentiert
-            //collection = new SeriesCollection
-            //{
-            //    new LineSeries
-            //    {
-            //        Title = "Kalorien",
-            //        Values = new ChartValues<double> { 4, 6, 5, 2 ,4 }
-            //    },
-            //    new LineSeries
-            //    {
-            //        Title = "Proteins",
-            //        Values = new ChartValues<double> { 6, 7, 3, 4 ,6 },
-            //        PointGeometry = null
-            //    },
-            //    new LineSeries
-            //    {
-            //        Title = "Carbs",
-            //        Values = new ChartValues<double> { 4,2,7,2,7 },
-            //        PointGeometry = DefaultGeometries.Square,
-            //        PointGeometrySize = 15
-            //    },
-            //    new LineSeries
-            //    {
-            //        Title = "Fate",
-            //        Values = new ChartValues<double> { 4,2,7,2,7 },
-            //        PointGeometry = DefaultGeometries.Square,
-            //        PointGeometrySize = 15
-            //    }
-            //};
-            ////modifying the series collection will animate and update the chart
-            //collection.Add(new LineSeries
-            //{
-            //    Title = "Series 4",
-            //    Values = new ChartValues<double> { 5, 3, 2, 4 },
-            //    LineSmoothness = 0, //0: straight lines, 1: really smooth lines
-            //    PointGeometry = Geometry.Parse("m 25 70.36218 20 -28 -20 22 -8 -6 z"),
-            //    PointGeometrySize = 50,
-            //    PointForeground = Brushes.Gray
-            //});
-
-            ////modifying any series values will also animate and update the chart
-            //collection[3].Values.Add(5d);
-            #endregion
+            
         }
 
         #region PropertyChange
@@ -196,17 +143,17 @@ namespace HealthAssistant.Charts
             #region Y-Axis Values
 
             LineSeries proteinSeries = new LineSeries();
-            proteinSeries.Title = "Proteins";
+            proteinSeries.Title = "Proteine";
             proteinSeries.Values = new ChartValues<double>();
             proteinSeries.LineSmoothness = 0.1;
 
             LineSeries carbSeries = new LineSeries();
-            carbSeries.Title = "Carbs";
+            carbSeries.Title = "Kohlehydrate";
             carbSeries.Values = new ChartValues<double>();
             carbSeries.LineSmoothness = 0.1;
 
             LineSeries fatSeries = new LineSeries();
-            fatSeries.Title = "Fate";
+            fatSeries.Title = "Fett";
             fatSeries.Values = new ChartValues<double>();
             fatSeries.LineSmoothness = 0.1;
 
@@ -284,17 +231,17 @@ namespace HealthAssistant.Charts
             #region Y-Axis Values
 
             LineSeries proteinSeries = new LineSeries();
-            proteinSeries.Title = "Proteins";
+            proteinSeries.Title = "Proteine";
             proteinSeries.Values = new ChartValues<double>();
             proteinSeries.LineSmoothness = 0.1;
 
             LineSeries carbSeries = new LineSeries();
-            carbSeries.Title = "Carbs";
+            carbSeries.Title = "Kohlehydrate";
             carbSeries.Values = new ChartValues<double>();
             carbSeries.LineSmoothness = 0.1;
 
             LineSeries fatSeries = new LineSeries();
-            fatSeries.Title = "Fate";
+            fatSeries.Title = "Fett";
             fatSeries.Values = new ChartValues<double>();
             fatSeries.LineSmoothness = 0.1;
 

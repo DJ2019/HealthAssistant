@@ -423,7 +423,7 @@ namespace HealthAssistant.Services
         }
         #endregion
 
-        #region Gewicht Query gesamt
+        #region Bodyweight Query full
         public List<Bodyweight> GetAllBodyweights(string tablename)
         {
             if (!PersistentDataProvider.Current.allTableNames.Contains(tablename))
@@ -460,7 +460,7 @@ namespace HealthAssistant.Services
         }
         #endregion
 
-        #region Exercise Query gesamt
+        #region Exercise Query full
         public List<Exercise> GetAllExercises(string tablename)
         {
             if (!PersistentDataProvider.Current.allTableNames.Contains(tablename))
@@ -497,7 +497,7 @@ namespace HealthAssistant.Services
         }
         #endregion
 
-        #region Workout Query gesamt
+        #region Workout Query full
         public List<Workout> GetAllWorkouts(string tablename)
         {
             if (!PersistentDataProvider.Current.allTableNames.Contains(tablename))
@@ -536,7 +536,7 @@ namespace HealthAssistant.Services
         }
         #endregion
 
-        #region Sollwertequery gesamt
+        #region TargetValue Query full
         public double GetTargetValue(string tablename)
         {
             if (!PersistentDataProvider.Current.allTableNames.Contains(tablename))

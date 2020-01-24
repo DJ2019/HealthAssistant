@@ -13,6 +13,8 @@ namespace HealthAssistant.Services
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            //Progressbar Color Converter based on Progress Value
+
             double progress = (double)value;
             var param = (string)parameter;
             var converter = new System.Windows.Media.BrushConverter();
